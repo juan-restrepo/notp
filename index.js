@@ -1,6 +1,7 @@
 'use strict';
 
 var crypto = require('crypto');
+var _ = require('lodash');
 
 /**
  * convert an integer to a byte array
@@ -114,9 +115,10 @@ hotp.verify = function(token, key, opt) {
 
 	// Now loop through from C to C + W to determine if there is
 	// a correct code
+	var _opt = _.clone(opt);
 	for(var i = counter - window; i <=  counter + window; ++i) {
-		opt.counter = i;
-		if(this.gen(key, opt) === token) {
+		_opt.counter = i;
+		if(this.gen(key, _opt) === token) {
 			// We have found a matching code, trigger callback
 			// and pass offset
 			return { delta: i - counter };
@@ -153,19 +155,20 @@ totp.gen = function(key, opt) {
 	var shift = opt.shift || 1;
 	var _t = Date.now();
 
+	var _opt = _.clone(opt);
 	// Time has been overwritten.
-	if(opt._t) {
+	if(_opt._t) {
 		if(process.env.NODE_ENV != 'test') {
 			throw new Error('cannot overwrite time in non-test environment!');
 		}
-		_t = opt._t;
+		_t = _opt._t;
 	}
 
 	// Determine the value of the counter, C
 	// This is the number of time steps in seconds since T0
-	opt.counter = Math.floor((_t / 1000) / time) + shift * counter;
+	_opt.counter = Math.floor((_t / 1000) / time) + shift * counter;
 
-	return hotp.gen(key, opt);
+	return hotp.gen(key, _opt);
 };
 
 /**
@@ -206,19 +209,20 @@ totp.verify = function(token, key, opt) {
 	var shift = opt.shift || 1;
 	var _t = Date.now();
 
+	var _opt = _.clone(opt);
 	// Time has been overwritten.
-	if(opt._t) {
+	if(_opt._t) {
 		if(process.env.NODE_ENV != 'test') {
 			throw new Error('cannot overwrite time in non-test environment!');
 		}
-		_t = opt._t;
+		_t = _opt._t;
 	}
 
 	// Determine the value of the counter, C
 	// This is the number of time steps in seconds since T0
-	opt.counter = Math.floor((_t / 1000) / time) + shift * counter;
+	_opt.counter = Math.floor((_t / 1000) / time) + shift * counter;
 
-	return hotp.verify(token, key, opt);
+	return hotp.verify(token, key, _opt);
 };
 
 module.exports.hotp = hotp;
