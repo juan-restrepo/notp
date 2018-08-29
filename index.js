@@ -157,8 +157,8 @@ totp.gen = function(key, opt) {
 
 	var _opt = _.clone(opt);
 	// Time has been overwritten.
-	if(_opt._t) {
-		if(process.env.NODE_ENV != 'test') {
+	if (_opt._t) {
+		if ( !(process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'mocha') ) {
 			throw new Error('cannot overwrite time in non-test environment!');
 		}
 		_t = _opt._t;
@@ -211,8 +211,8 @@ totp.verify = function(token, key, opt) {
 
 	var _opt = _.clone(opt);
 	// Time has been overwritten.
-	if(_opt._t) {
-		if(process.env.NODE_ENV != 'test') {
+	if (_opt._t) {
+		if ( !(process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'mocha') ) {
 			throw new Error('cannot overwrite time in non-test environment!');
 		}
 		_t = _opt._t;
